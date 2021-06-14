@@ -1,3 +1,7 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
 const sequelize = require('./util/database');
 const User = require('./models/user');
 const Chat = require('./models/chat');
@@ -5,6 +9,17 @@ const PrivateChat = require('./models/private-chat');
 const Group = require('./models/group');
 const GroupMember = require('./models/group-member');
 const Message = require('./models/message');
+
+const app = express();
+
+const authRoutes = require('./routes/auth');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors({ origin: 'http://localhost:4200' }));
+
+/* routes section */
+app.use('/auth', authRoutes);
 
 /* sequelize relations */
 
