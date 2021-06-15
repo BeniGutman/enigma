@@ -15,7 +15,6 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    console.log('in login component');
   }
 
   onSubmit(form: NgForm) {
@@ -31,8 +30,9 @@ export class LoginComponent implements OnInit {
     this.authService.login(userName, password).subscribe(
       //Handle response data
       (resData) => {
-        console.log(resData);
+        console.log('resData:', resData);
         this.isLoading = false;
+        this.error = '';
       },
       //Handle response error
       (errorMessage) => {

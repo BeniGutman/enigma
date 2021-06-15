@@ -7,7 +7,7 @@
     <img src="assets/img/Rolling.gif" />
   </div>
 
-  <div *ngIf="error">
+  <div *ngIf="error && !isLoading">
     <p class="error">{{ error }}</p>
   </div>
 

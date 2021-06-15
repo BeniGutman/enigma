@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { AuthService } from '../auth.service';
 
@@ -12,10 +13,9 @@ export class RegisterComponent implements OnInit {
   isLoading: boolean = false;
   error: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    console.log('in register component');
   }
 
   onSubmit(form: NgForm) {
@@ -32,12 +32,14 @@ export class RegisterComponent implements OnInit {
     this.authService.register(email, userName, password).subscribe(
       //Handle response data
       (resData) => {
-        console.log(resData);
+        console.log('resData:', resData);
         this.isLoading = false;
+        this.error = '';
+        this.router.navigate(['auth/login']);
       },
       //Handle response error
       (errorMessage) => {
-        console.log(errorMessage);
+        console.log('errorMessage:', errorMessage);
         this.isLoading = false;
         this.error = errorMessage;
       }
