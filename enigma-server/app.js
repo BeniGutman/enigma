@@ -87,8 +87,7 @@ Message.belongsTo(Chat, {
 });
 
 sequelize
-  // .sync()
-  .sync({ force: true })
+  .sync()
   .then((result) => {
     app.listen(5000, () => {
       console.log('listen on port 5000');
