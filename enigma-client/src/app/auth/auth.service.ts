@@ -11,6 +11,8 @@ export interface LoginResponseData {
   userId: number;
   userName: string;
   email: string;
+  token: string;
+  refreshToken: string;
 }
 
 @Injectable({
@@ -44,7 +46,9 @@ export class AuthService {
           this.handleAuthentication(
             resData.userId,
             resData.userName,
-            resData.email
+            resData.email,
+            resData.token,
+            resData.refreshToken
           );
         })
       );
@@ -53,10 +57,12 @@ export class AuthService {
   private handleAuthentication(
     userId: number,
     userName: string,
-    email: string
+    email: string,
+    token: string,
+    refreshToken: string
   ) {
     // const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
-    const user = new User(userId, userName, email);
+    const user = new User(userId, userName, email, token, refreshToken);
     this.user.next(user);
   }
 
