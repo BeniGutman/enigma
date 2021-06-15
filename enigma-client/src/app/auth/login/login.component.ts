@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { AuthService } from '../auth.service';
 
@@ -12,10 +13,9 @@ export class LoginComponent implements OnInit {
   isLoading: boolean = false;
   error: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   onSubmit(form: NgForm) {
     if (!form.valid) {
@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
         console.log('resData:', resData);
         this.isLoading = false;
         this.error = '';
+        this.router.navigate(['/']);
       },
       //Handle response error
       (errorMessage) => {
