@@ -1,0 +1,68 @@
+<div class="parent">
+  <mat-toolbar class="toolbar">
+    <div class="span">WELCOME!</div>
+  </mat-toolbar>
+
+  <div *ngIf="isLoading">
+    <img src="assets/img/Rolling.gif" />
+  </div>
+
+  <div *ngIf="error">
+    <p class="error">{{ error }}</p>
+  </div>
+
+  <form
+    #registerForm="ngForm"
+    class="my-form"
+    (ngSubmit)="onSubmit(registerForm)"
+    *ngIf="!isLoading"
+  >
+    <mat-form-field class="full-width">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        placeholder="Email"
+        type="email"
+        id="email"
+        class="form-control"
+        ngModel
+        name="email"
+        required
+        email
+      />
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Username</mat-label>
+      <input
+        matInput
+        placeholder="Username"
+        type="username"
+        id="userName"
+        class="form-control"
+        ngModel
+        name="userName"
+        required
+      />
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        placeholder="Password"
+        type="password"
+        id="password"
+        class="form-control"
+        ngModel
+        name="password"
+        required
+        minlength="6"
+      />
+    </mat-form-field>
+
+    <button mat-raised-button type="submit" [disabled]="!registerForm.valid">
+      Register
+    </button>
+  </form>
+</div>

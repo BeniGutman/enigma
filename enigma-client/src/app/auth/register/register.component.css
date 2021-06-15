@@ -1,0 +1,32 @@
+.my-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.parent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.span {
+  margin: auto;
+}
+
+.toolbar {
+  color: white;
+  background-color: rgb(56, 78, 78);
+}
+
+.error {
+  padding: 7px;
+  background-color: mistyrose;
+  border: 4px solid red;
+  font-size: 1.3em;
+}
