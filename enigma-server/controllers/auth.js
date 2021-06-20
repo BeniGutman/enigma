@@ -65,6 +65,7 @@ exports.login = async (req, res) => {
     userName: user.userName,
     email: user.email,
     token: newAccessToken,
+    expiresIn: 15 * 60, // 15 minutes
     refreshToken: newRefreshToken,
   });
 };
@@ -81,7 +82,10 @@ exports.refreshToken = (req, res) => {
     }
 
     const newAccessToken = generateAccessToken({ id: user.id });
-    return res.status(201).send({ accessToken: newAccessToken });
+    return res.status(201).send({
+      accessToken: newAccessToken,
+      expiresIn: 15 * 60, // 15 minutes
+    });
   });
 };
 

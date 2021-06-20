@@ -4,6 +4,7 @@ export class User {
     private _userName: string,
     private _email: string,
     private _token: string,
+    private _tokenExpirationDate: Date,
     private _refreshToken: string
   ) {}
 
@@ -25,5 +26,12 @@ export class User {
 
   get refreshToken() {
     return this._refreshToken;
+  }
+
+  public isTokenValid() {
+    if (new Date() > this._tokenExpirationDate) {
+      return false;
+    }
+    return true;
   }
 }
