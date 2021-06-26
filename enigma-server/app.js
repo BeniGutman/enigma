@@ -15,6 +15,7 @@ const Message = require('./models/message');
 const app = express();
 
 const authRoutes = require('./routes/auth');
+const chatRoutes = require('./routes/chat');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -22,6 +23,7 @@ app.use(cors({ origin: 'http://localhost:4200' }));
 
 /* routes section */
 app.use('/auth', authRoutes);
+app.use('/chats', chatRoutes);
 
 /* sequelize relations */
 
@@ -90,6 +92,7 @@ Message.belongsTo(Chat, {
 
 sequelize
   .sync()
+  // .sync({ force: true })
   .then((result) => {
     app.listen(5000, () => {
       console.log('listen on port 5000');
