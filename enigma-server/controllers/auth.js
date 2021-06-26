@@ -76,25 +76,29 @@ exports.refreshToken = (req, res) => {
     return res.status(401).send({ error: 'token is needed' });
   }
 
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).send({ error: 'token not valid' });
-    }
+  return jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET,
+    (err, user) => {
+      if (err) {
+        return res.status(403).send({ error: 'token not valid' });
+      }
 
-    const newAccessToken = generateAccessToken({ id: user.id });
-    return res.status(201).send({
-      accessToken: newAccessToken,
-      expiresIn: 15 * 60, // 15 minutes
-    });
-  });
+      const newAccessToken = generateAccessToken({ id: user.id });
+      return res.status(201).send({
+        accessToken: newAccessToken,
+        expiresIn: 15 * 60, // 15 minutes
+      });
+    }
+  );
 };
 
 exports.verifyToken = (req, res, next) => {
-  const token = req.headers['x-access-token'];
-  if (!token) {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).send({ auth: false, message: 'No token provided.' });
   }
-
+  const token = authHeader.split(' ')[1];
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) {
       res
