@@ -1,4 +1,5 @@
 const { Op } = require('sequelize');
+const { validationResult } = require('express-validator/check');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -16,6 +17,11 @@ const generateAccessToken = (userId) => {
 };
 
 exports.register = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
   const { email, password, userName } = req.body;
 
   let user;
@@ -40,6 +46,11 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
   const { userName, password } = req.body;
 
   const user = await User.findOne({
