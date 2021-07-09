@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-
+const { validationResult } = require('express-validator/check');
 const User = require('../models/user');
 const Chat = require('../models/chat');
 const PrivateChat = require('../models/private-chat');
@@ -97,6 +97,11 @@ exports.getChatsMetadata = async (req, res) => {
 };
 
 exports.openPrivateChat = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
   const { userId } = req;
   const { otherUserName } = req.body;
   const otherUser = await User.findOne({ where: { userName: otherUserName } });
@@ -128,6 +133,11 @@ exports.openPrivateChat = async (req, res) => {
 };
 
 exports.openGroup = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
   const { userId } = req;
   const { groupName } = req.body;
 
@@ -138,6 +148,11 @@ exports.openGroup = async (req, res) => {
 };
 
 exports.getGroupMembers = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
   const { userId } = req;
   const { chatId } = req.params;
   const user = await User.findByPk(userId);
@@ -160,9 +175,13 @@ exports.getGroupMembers = async (req, res) => {
 };
 
 exports.addUserToGroup = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
   const { userId } = req;
-  const { chatId } = req.params;
-  const { otherUserName } = req.body;
+  const { chatId, otherUserName } = req.params;
   const group = await Group.findOne({ where: { chatId } });
 
   if (!group) {
@@ -194,9 +213,13 @@ exports.addUserToGroup = async (req, res) => {
 };
 
 exports.removeUserFromGroup = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
   const { userId } = req;
-  const { chatId } = req.params;
-  const { otherUserName } = req.body;
+  const { chatId, otherUserName } = req.params;
   const group = await Group.findOne({ where: { chatId } });
   const otherUser = await User.findOne({ where: { userNane: otherUserName } });
 
@@ -217,6 +240,11 @@ exports.removeUserFromGroup = async (req, res) => {
 };
 
 exports.leaveGroup = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
   const { userId } = req;
   const { chatId } = req.params;
   const user = await User.findByPk(userId);
@@ -232,6 +260,11 @@ exports.leaveGroup = async (req, res) => {
 };
 
 exports.getChatMessages = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
   const { userId } = req;
   const { chatId } = req.params;
 
@@ -257,6 +290,11 @@ exports.getChatMessages = async (req, res) => {
 };
 
 exports.sendMessage = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
   const { userId } = req;
   const { chatId } = req.params;
   const { message } = req.body;
