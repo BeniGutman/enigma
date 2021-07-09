@@ -31,7 +31,14 @@ router.get(
   chatController.getGroupMembers
 );
 
-// /chats/groups/:chatId/members => POST
+// /chats/groups/:chatId/members/me => DELETE
+router.delete(
+  '/groups/:chatId/members/me',
+  param('chatId').isInt(),
+  chatController.leaveGroup
+);
+
+// /chats/groups/:chatId/members/:otherUserName => POST
 router.post(
   '/groups/:chatId/members/:otherUserName',
   param('chatId').isInt(),
@@ -39,19 +46,12 @@ router.post(
   chatController.addUserToGroup
 );
 
-// /chats/groups/:chatId/members => DELETE
+// /chats/groups/:chatId/members/:otherUserName => DELETE
 router.delete(
   '/groups/:chatId/members/:otherUserName',
   param('chatId').isInt(),
   param('otherUserName').trim().not().isEmpty(),
   chatController.removeUserFromGroup
-);
-
-// /chats/groups/:chatId/members/me => DELETE
-router.delete(
-  '/groups/:chatId/members/me',
-  param('chatId').isInt(),
-  chatController.leaveGroup
 );
 
 // /chats/:chatId/messages => GET

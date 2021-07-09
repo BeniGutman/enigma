@@ -174,6 +174,26 @@ exports.getGroupMembers = async (req, res) => {
   return res.send(results);
 };
 
+exports.leaveGroup = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors);
+  }
+
+  const { userId } = req;
+  const { chatId } = req.params;
+  const user = await User.findByPk(userId);
+  const group = await Group.findOne({ where: { chatId } });
+
+  if (!group) {
+    return res.status(404).send({ error: 'no such group' });
+  }
+
+  await group.removeMember(user);
+
+  return res.status(201).send({ success: true });
+};
+
 exports.addUserToGroup = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -235,26 +255,6 @@ exports.removeUserFromGroup = async (req, res) => {
   }
 
   await group.removeMember(otherUser);
-
-  return res.status(201).send({ success: true });
-};
-
-exports.leaveGroup = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
-  }
-
-  const { userId } = req;
-  const { chatId } = req.params;
-  const user = await User.findByPk(userId);
-  const group = await Group.findOne({ where: { chatId } });
-
-  if (!group) {
-    return res.status(404).send({ error: 'no such group' });
-  }
-
-  await group.removeMember(user);
 
   return res.status(201).send({ success: true });
 };
