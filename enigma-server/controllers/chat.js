@@ -19,7 +19,7 @@ const createNewPrivateChat = async (firstUserId, secondUserId) => {
   return newPrivateChat;
 };
 
-const createNewGroup = async (owner, groupName) => {
+const createNewGroup = async (ownerId, groupName) => {
   const newChat = await Chat.create({
     openDate: new Date(),
     isGroup: true,
@@ -27,7 +27,7 @@ const createNewGroup = async (owner, groupName) => {
 
   const newGroup = await newChat.createGroup({
     name: groupName,
-    ownerId: owner.id,
+    ownerId,
   });
 
   return newGroup;
@@ -141,8 +141,10 @@ exports.openGroup = async (req, res) => {
   const { userId } = req;
   const { groupName } = req.body;
 
-  const user = await User.findByPk(userId);
-  const newGroup = await createNewGroup(user, groupName);
+  const [user, newGroup] = await Promise.all([
+    User.findByPk(userId),
+    createNewGroup(userId, groupName),
+  ]);
   await newGroup.addMember(user);
   return res.status(201).send({ chatId: newGroup.chatId });
 };
@@ -155,9 +157,11 @@ exports.getGroupMembers = async (req, res) => {
 
   const { userId } = req;
   const { chatId } = req.params;
-  const user = await User.findByPk(userId);
+  const [user, group] = await Promise.all([
+    User.findByPk(userId),
+    Group.findOne({ where: { chatId } }),
+  ]);
 
-  const group = await Group.findOne({ where: { chatId } });
   if (!group) {
     return res.status(404).send({ error: 'no such group' });
   }
@@ -182,8 +186,10 @@ exports.leaveGroup = async (req, res) => {
 
   const { userId } = req;
   const { chatId } = req.params;
-  const user = await User.findByPk(userId);
-  const group = await Group.findOne({ where: { chatId } });
+  const [user, group] = await Promise.all([
+    User.findByPk(userId),
+    Group.findOne({ where: { chatId } }),
+  ]);
 
   if (!group) {
     return res.status(404).send({ error: 'no such group' });
@@ -202,7 +208,11 @@ exports.addUserToGroup = async (req, res) => {
 
   const { userId } = req;
   const { chatId, otherUserName } = req.params;
-  const group = await Group.findOne({ where: { chatId } });
+
+  const [group, otherUser] = await Promise.all([
+    Group.findOne({ where: { chatId } }),
+    User.findOne({ where: { userName: otherUserName } }),
+  ]);
 
   if (!group) {
     return res.status(404).send({ error: 'no such group' });
@@ -215,7 +225,6 @@ exports.addUserToGroup = async (req, res) => {
       .send({ error: 'you are not the owner of this group' });
   }
 
-  const otherUser = await User.findOne({ where: { userName: otherUserName } });
   if (!otherUser) {
     return res
       .status(404)
@@ -240,8 +249,11 @@ exports.removeUserFromGroup = async (req, res) => {
 
   const { userId } = req;
   const { chatId, otherUserName } = req.params;
-  const group = await Group.findOne({ where: { chatId } });
-  const otherUser = await User.findOne({ where: { userNane: otherUserName } });
+
+  const [group, otherUser] = await Promise.all([
+    Group.findOne({ where: { chatId } }),
+    User.findOne({ where: { userName: otherUserName } }),
+  ]);
 
   if (!group) {
     return res.status(404).send({ error: 'no such group' });
@@ -268,8 +280,10 @@ exports.getChatMessages = async (req, res) => {
   const { userId } = req;
   const { chatId } = req.params;
 
-  const user = await User.findByPk(userId);
-  const chat = await Chat.findByPk(chatId);
+  const [user, chat] = await Promise.all([
+    User.findByPk(userId),
+    Chat.findByPk(chatId),
+  ]);
 
   if (!chat) {
     return res.status(404).send({ error: 'no such chat' });
@@ -299,8 +313,10 @@ exports.sendMessage = async (req, res) => {
   const { chatId } = req.params;
   const { message } = req.body;
 
-  const user = await User.findByPk(userId);
-  const chat = await Chat.findByPk(chatId);
+  const [user, chat] = await Promise.all([
+    User.findByPk(userId),
+    Chat.findByPk(chatId),
+  ]);
 
   if (!chat) {
     return res.status(404).send({ error: 'no such chat' });
