@@ -19,7 +19,10 @@ const generateAccessToken = (userId) => {
 exports.register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
   const { email, password, userName } = req.body;
@@ -32,7 +35,9 @@ exports.register = async (req, res) => {
   });
 
   if (user) {
-    return res.status(400).send({ error: 'user already exists' });
+    const error = new Error('user already exists');
+    error.statusCode = 400;
+    throw error;
   }
 
   const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
@@ -48,7 +53,10 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
+    const error = new Error('Validation failed');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
   const { userName, password } = req.body;
@@ -60,7 +68,9 @@ exports.login = async (req, res) => {
   });
 
   if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(400).send({ error: 'wrong username or password' });
+    const error = new Error('wrong username or password');
+    error.statusCode = 400;
+    throw error;
   }
 
   const newAccessToken = generateAccessToken(user.id);
@@ -82,17 +92,23 @@ exports.login = async (req, res) => {
 };
 
 exports.refreshToken = (req, res) => {
-  const refreshToken = req.body.token;
-  if (!refreshToken) {
-    return res.status(401).send({ error: 'token is needed' });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
+  const refreshToken = req.body.token;
   return jwt.verify(
     refreshToken,
     process.env.REFRESH_TOKEN_SECRET,
     (err, user) => {
       if (err) {
-        return res.status(403).send({ error: 'token not valid' });
+        const error = new Error('token not valid');
+        error.statusCode = 403;
+        throw error;
       }
 
       const newAccessToken = generateAccessToken({ id: user.id });
@@ -107,14 +123,16 @@ exports.refreshToken = (req, res) => {
 exports.verifyToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).send({ auth: false, message: 'No token provided.' });
+    const error = new Error('No token provided');
+    error.statusCode = 401;
+    throw error;
   }
   const token = authHeader.split(' ')[1];
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) {
-      res
-        .status(500)
-        .send({ auth: false, message: 'Failed to authenticate token.' });
+      const error = new Error('Failed to authenticate token');
+      error.statusCode = 500;
+      throw error;
     } else {
       req.userId = user.id;
       next();

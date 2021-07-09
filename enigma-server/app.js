@@ -25,6 +25,14 @@ app.use(cors({ origin: 'http://localhost:4200' }));
 app.use('/auth', authRoutes);
 app.use('/chats', chatRoutes);
 
+app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500;
+  const message = error.message;
+  const data = error.data;
+  res.status(status).json({ message: message, data: data });
+});
+
 /* sequelize relations */
 
 // one to one relation between groups and chat
