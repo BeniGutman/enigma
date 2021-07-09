@@ -79,7 +79,7 @@ export class AuthService {
       });
   }
 
-  autoLogin() {
+  autoLogin(refreshTokenIfNeed: boolean = false) {
     const userData = this.loadUserDataFromLocalStorage();
     if (!userData) {
       return;
@@ -92,10 +92,11 @@ export class AuthService {
       new Date(userData._tokenExpirationDate),
       userData._refreshToken
     );
+
     if (user.isTokenValid()) {
       this.user.next(user);
       this.router.navigate(['/']);
-    } else {
+    } else if (refreshTokenIfNeed) {
       this.refreshTheToken(user.refreshToken, true);
     }
   }

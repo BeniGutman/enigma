@@ -31,8 +31,12 @@ const PrivateChat = sequelize.define(
         fields: ['chatId'],
       },
       {
-        unique: true,
-        fields: ['firstUserId', 'secondUserId'],
+        unique: false,
+        fields: ['firstUserId'],
+      },
+      {
+        unique: false,
+        fields: ['secondUserId'],
       },
     ],
   }

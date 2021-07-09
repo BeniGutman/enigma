@@ -13,15 +13,22 @@ import { AppComponent } from './app.component';
 import { AuthComponent } from './auth/auth.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
-import { HomeComponent } from './home/home.component';
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
+import { ChatsComponent } from './chats/chats.component';
+import { ChatListComponent } from './chats/chat-list/chat-list.component';
+import { ChatItemComponent } from './chats/chat-list/chat-item/chat-item.component';
+import { ChatComponent } from './chats/chat/chat.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     AuthComponent,
     LoginComponent,
     RegisterComponent,
-    HomeComponent,
+    ChatsComponent,
+    ChatListComponent,
+    ChatItemComponent,
+    ChatComponent,
   ],
   imports: [
     BrowserModule,

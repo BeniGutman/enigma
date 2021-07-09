@@ -57,7 +57,7 @@ exports.getChatsMetadata = async (req, res) => {
   const { userId } = req;
   const user = await User.findByPk(userId);
 
-  const privateChatResults = await PrivateChat.findAll({
+  let privateChats = await PrivateChat.findAll({
     where: {
       [Op.or]: [{ firstUserId: userId }, { secondUserId: userId }],
     },
@@ -76,12 +76,23 @@ exports.getChatsMetadata = async (req, res) => {
     ],
   });
 
-  const groupResults = await user.getGroups({
+  let groups = await user.getGroups({
     attributes: ['chatId', 'name'],
     joinTableAttributes: [],
   });
 
-  const results = [...privateChatResults, ...groupResults];
+  privateChats = privateChats.map((privateChat) => ({
+    ...privateChat.dataValues,
+    messages: [],
+  }));
+
+  groups = groups.map((group) => ({
+    ...group.dataValues,
+    messages: [],
+    members: [],
+  }));
+
+  const results = { groups, privateChats };
   return res.send(results);
 };
 
