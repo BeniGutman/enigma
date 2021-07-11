@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "dev-server": "nodemon app.js"
+    "start": "nodemon app.js",
+    "debug": "DEBUG=app node ./bin/www"
   },
   "author": "Beni Gutman",
   "license": "ISC",
@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
     "express-validator": "^6.12.0",
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.6.0",
