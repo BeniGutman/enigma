@@ -24,6 +24,10 @@ router.post(
   asyncHandler(authController.login)
 );
 
-router.post('/token', authController.refreshToken);
+router.post(
+  '/token',
+  body('token').not().isEmpty(),
+  authController.refreshToken
+);
 
 module.exports = router;

@@ -99,7 +99,10 @@ exports.getChatsMetadata = async (req, res) => {
 exports.openPrivateChat = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
   const { userId } = req;
@@ -107,9 +110,9 @@ exports.openPrivateChat = async (req, res) => {
   const otherUser = await User.findOne({ where: { userName: otherUserName } });
 
   if (!otherUser) {
-    return res
-      .status(422)
-      .send({ error: `no such user with userName: ${otherUserName}` });
+    const error = new Error(`no such user with userName: ${otherUserName}`);
+    error.statusCode = 404;
+    throw error;
   }
 
   let privateChat = await PrivateChat.findOne({
@@ -135,7 +138,10 @@ exports.openPrivateChat = async (req, res) => {
 exports.openGroup = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
   const { userId } = req;
@@ -152,7 +158,10 @@ exports.openGroup = async (req, res) => {
 exports.getGroupMembers = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
   const { userId } = req;
@@ -163,11 +172,15 @@ exports.getGroupMembers = async (req, res) => {
   ]);
 
   if (!group) {
-    return res.status(404).send({ error: 'no such group' });
+    const error = new Error('no such group');
+    error.statusCode = 404;
+    throw error;
   }
 
   if (!(await isUserInGroup(user, group))) {
-    return res.status(401).send({ error: 'you are not in this group' });
+    const error = new Error('you are not in this group');
+    error.statusCode = 401;
+    throw error;
   }
 
   const results = await group.getMembers({
@@ -181,7 +194,10 @@ exports.getGroupMembers = async (req, res) => {
 exports.leaveGroup = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
   const { userId } = req;
@@ -192,7 +208,9 @@ exports.leaveGroup = async (req, res) => {
   ]);
 
   if (!group) {
-    return res.status(404).send({ error: 'no such group' });
+    const error = new Error('no such group');
+    error.statusCode = 404;
+    throw error;
   }
 
   await group.removeMember(user);
@@ -203,7 +221,10 @@ exports.leaveGroup = async (req, res) => {
 exports.addUserToGroup = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
   const { userId } = req;
@@ -215,24 +236,28 @@ exports.addUserToGroup = async (req, res) => {
   ]);
 
   if (!group) {
-    return res.status(404).send({ error: 'no such group' });
+    const error = new Error('no such group');
+    error.statusCode = 404;
+    throw error;
   }
 
   // check if the user own the group
   if (group.ownerId !== userId) {
-    return res
-      .status(401)
-      .send({ error: 'you are not the owner of this group' });
+    const error = new Error('you are not the owner of this group');
+    error.statusCode = 403;
+    throw error;
   }
 
   if (!otherUser) {
-    return res
-      .status(404)
-      .send({ error: `no such user with userName: ${otherUserName}` });
+    const error = new Error(`no such user with userName: ${otherUserName}`);
+    error.statusCode = 404;
+    throw error;
   }
 
   if (await isUserInGroup(otherUser, group)) {
-    return res.status(400).send({ error: 'user already in the group' });
+    const error = new Error('user already in the group');
+    error.statusCode = 400;
+    throw error;
   }
 
   // add the other user to the group
@@ -244,7 +269,10 @@ exports.addUserToGroup = async (req, res) => {
 exports.removeUserFromGroup = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
   const { userId } = req;
@@ -256,14 +284,16 @@ exports.removeUserFromGroup = async (req, res) => {
   ]);
 
   if (!group) {
-    return res.status(404).send({ error: 'no such group' });
+    const error = new Error('no such group');
+    error.statusCode = 404;
+    throw error;
   }
 
   // check if the user own the group
   if (group.ownerId !== userId) {
-    return res
-      .status(401)
-      .send({ error: 'you are not the owner of this group' });
+    const error = new Error('you are not the owner of this group');
+    error.statusCode = 403;
+    throw error;
   }
 
   await group.removeMember(otherUser);
@@ -274,7 +304,10 @@ exports.removeUserFromGroup = async (req, res) => {
 exports.getChatMessages = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
   const { userId } = req;
@@ -286,11 +319,15 @@ exports.getChatMessages = async (req, res) => {
   ]);
 
   if (!chat) {
-    return res.status(404).send({ error: 'no such chat' });
+    const error = new Error('no such chat');
+    error.statusCode = 404;
+    throw error;
   }
 
   if (!(await isUserInChat(user, chat))) {
-    return res.status(401).send({ error: 'you are not in this chat' });
+    const error = new Error('you are not in this chat');
+    error.statusCode = 401;
+    throw error;
   }
 
   const messages = await chat.getMessages({
@@ -306,7 +343,10 @@ exports.getChatMessages = async (req, res) => {
 exports.sendMessage = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json(errors);
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
   }
 
   const { userId } = req;
@@ -319,11 +359,15 @@ exports.sendMessage = async (req, res) => {
   ]);
 
   if (!chat) {
-    return res.status(404).send({ error: 'no such chat' });
+    const error = new Error('no such chat');
+    error.statusCode = 404;
+    throw error;
   }
 
   if (!(await isUserInChat(user, chat))) {
-    return res.status(401).send({ error: 'you are not in this chat' });
+    const error = new Error('you are not in this chat');
+    error.statusCode = 401;
+    throw error;
   }
 
   await chat.createMessage({
