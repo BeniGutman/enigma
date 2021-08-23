@@ -5,6 +5,7 @@ const authController = require('../controllers/auth');
 
 const router = express.Router();
 
+// POST /auth/register
 router.post(
   '/register',
   [
@@ -15,6 +16,7 @@ router.post(
   asyncHandler(authController.register)
 );
 
+// POST /auth/login
 router.post(
   '/login',
   [
@@ -24,6 +26,7 @@ router.post(
   asyncHandler(authController.login)
 );
 
+// POST /auth/token
 router.post(
   '/token',
   body('token').not().isEmpty(),
