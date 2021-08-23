@@ -1,58 +1,34 @@
 import { Injectable } from '@angular/core';
+import { forkJoin, Observable } from 'rxjs';
 
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, tap, take, exhaustMap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
-import * as config from '../../../assets/config.json';
+import { ApiService } from '../../api.service';
+import { Chat } from '../models/chat.model';
 import { ChatStorageService } from './chat-storage.service';
-import { Group } from '../models/group.model';
-import { PrivateChat } from '../models/private-chat.model';
+import { GroupService } from './group.service';
+import { PrivateChatService } from './private-chat.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
   constructor(
-    private http: HttpClient,
+    private apiService: ApiService,
+    private groupService: GroupService,
+    private privateChatService: PrivateChatService,
     private chatStorageService: ChatStorageService
   ) {}
-  conf = config;
 
-  getAllChats() {
-    return this.http
-      .get<{ groups: any; privateChats: any }>(this.conf.webApiUrl + 'chats')
-      .pipe(
-        map((result) => {
-          let privateChats = result.privateChats;
-          let groups = result.groups;
-
-          groups = groups.map((group: any) => {
-            return new Group(
-              group.chatId,
-              group.name,
-              group.members,
-              group.messages
-            );
-          });
-
-          privateChats = privateChats.map((privateChat: any) => {
-            let otherUserName = privateChat.firstUser.userName;
-            if (otherUserName === 'myUserName') {
-              otherUserName = privateChat.secondUser.userName;
-            }
-            return new PrivateChat(
-              privateChat.chatId,
-              privateChat.messages,
-              otherUserName
-            );
-          });
-
-          return [...privateChats, ...groups];
-        }),
-        tap((chats) => {
-          this.chatStorageService.setChats(chats);
-        })
-      );
+  getAllChats(): Observable<Chat[]> {
+    return forkJoin({
+      groups: this.groupService.getAllGroups(),
+      privateChats: this.privateChatService.getAllPrivateChats(),
+    }).pipe(
+      map((results) => {
+        return [...results.groups, ...results.privateChats];
+      })
+    );
   }
 
   getAllMessage() {
