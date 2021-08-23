@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
 import { throwError, BehaviorSubject } from 'rxjs';
 
+import { ApiService } from '../api.service';
 import { User } from './user.model';
-import * as config from '../../assets/config.json';
 
 interface LoginResponseData {
   userId: number;
@@ -27,12 +27,11 @@ interface RefreshTokenResponseData {
 export class AuthService {
   user = new BehaviorSubject<User | null>(null);
 
-  constructor(private http: HttpClient, private router: Router) {}
-  conf = config;
+  constructor(private apiService: ApiService, private router: Router) {}
 
   register(email: string, userName: string, password: string) {
-    return this.http
-      .post(this.conf.webApiUrl + 'auth/register', {
+    return this.apiService
+      .post('auth/register', {
         email: email,
         userName: userName,
         password: password,
@@ -41,8 +40,8 @@ export class AuthService {
   }
 
   login(userName: string, password: string) {
-    return this.http
-      .post<LoginResponseData>(this.conf.webApiUrl + 'auth/login', {
+    return this.apiService
+      .post('auth/login', {
         userName: userName,
         password: password,
       })
@@ -62,8 +61,8 @@ export class AuthService {
   }
 
   refreshTheToken(refreshToken: string, navigateHome: boolean = false) {
-    this.http
-      .post<RefreshTokenResponseData>(this.conf.webApiUrl + 'auth/token', {
+    this.apiService
+      .post('auth/token', {
         token: refreshToken,
       })
       .pipe(
