@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator/check');
 const asyncHandler = require('express-async-handler');
+const { validateRequest } = require('../util/requests-validator');
 const privateChatController = require('../controllers/private-chat');
 
 const router = express.Router();
@@ -12,7 +13,7 @@ router.get('/', asyncHandler(privateChatController.getPrivateChatsMetadata));
 router.post(
   '/',
   body('otherUserName').trim().not().isEmpty(),
-  asyncHandler(privateChatController.openPrivateChat)
+  asyncHandler(validateRequest(privateChatController.openPrivateChat))
 );
 
 module.exports = router;
