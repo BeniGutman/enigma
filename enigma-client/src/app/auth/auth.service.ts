@@ -47,7 +47,7 @@ export class AuthService {
       })
       .pipe(
         catchError(this.handleError),
-        tap((resData) => {
+        tap((resData: any) => {
           this.handleAuthentication(
             resData.userId,
             resData.userName,
@@ -67,11 +67,12 @@ export class AuthService {
       })
       .pipe(
         catchError(this.handleError),
-        tap((resData) => {
+        tap((resData: any) => {
+          console.log(resData);
           this.handleRefreshToken(resData.accessToken, resData.expiresIn);
         })
       )
-      .subscribe((resData) => {
+      .subscribe((resData: any) => {
         if (navigateHome) {
           this.router.navigate(['/']);
         }
