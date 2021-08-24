@@ -1,5 +1,4 @@
 const { Op } = require('sequelize');
-const { validationResult } = require('express-validator/check');
 const User = require('../models/user');
 const Chat = require('../models/chat');
 const PrivateChat = require('../models/private-chat');
@@ -55,14 +54,6 @@ exports.getPrivateChatsMetadata = async (req, res) => {
 };
 
 exports.openPrivateChat = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed.');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
-
   const { userId } = req;
   const { otherUserName } = req.body;
   const otherUser = await User.findOne({ where: { userName: otherUserName } });

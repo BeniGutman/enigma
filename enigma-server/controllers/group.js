@@ -1,27 +1,8 @@
-const { validationResult } = require('express-validator/check');
 const User = require('../models/user');
 const Chat = require('../models/chat');
 const Group = require('../models/group');
 
-exports.getGroupsMetadata = async (req, res) => {
-  const { userId } = req;
-  const user = await User.findByPk(userId);
-
-  let groups = await user.getGroups({
-    attributes: ['chatId', 'name'],
-    joinTableAttributes: [],
-  });
-
-  groups = groups.map((group) => ({
-    ...group.dataValues,
-    messages: [],
-    members: [],
-  }));
-
-  return res.send(groups);
-};
-
-exports.createNewGroup = async (ownerId, groupName) => {
+const createNewGroup = async (ownerId, groupName) => {
   const newChat = await Chat.create({
     openDate: new Date(),
     isGroup: true,
@@ -42,15 +23,25 @@ exports.isUserInGroup = async (user, group) => {
   return false;
 };
 
-exports.openGroup = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed.');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
+exports.getGroupsMetadata = async (req, res) => {
+  const { userId } = req;
+  const user = await User.findByPk(userId);
 
+  let groups = await user.getGroups({
+    attributes: ['chatId', 'name'],
+    joinTableAttributes: [],
+  });
+
+  groups = groups.map((group) => ({
+    ...group.dataValues,
+    messages: [],
+    members: [],
+  }));
+
+  return res.send(groups);
+};
+
+exports.openGroup = async (req, res) => {
   const { userId } = req;
   const { groupName } = req.body;
 
@@ -63,14 +54,6 @@ exports.openGroup = async (req, res) => {
 };
 
 exports.getGroupMembers = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed.');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
-
   const { userId } = req;
   const { chatId } = req.params;
   const [user, group] = await Promise.all([
@@ -84,7 +67,7 @@ exports.getGroupMembers = async (req, res) => {
     throw error;
   }
 
-  if (!(await isUserInGroup(user, group))) {
+  if (!(await exports.isUserInGroup(user, group))) {
     const error = new Error('you are not in this group');
     error.statusCode = 401;
     throw error;
@@ -99,14 +82,6 @@ exports.getGroupMembers = async (req, res) => {
 };
 
 exports.leaveGroup = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed.');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
-
   const { userId } = req;
   const { chatId } = req.params;
   const [user, group] = await Promise.all([
@@ -126,14 +101,6 @@ exports.leaveGroup = async (req, res) => {
 };
 
 exports.addUserToGroup = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed.');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
-
   const { userId } = req;
   const { chatId, otherUserName } = req.params;
 
@@ -161,7 +128,7 @@ exports.addUserToGroup = async (req, res) => {
     throw error;
   }
 
-  if (await isUserInGroup(otherUser, group)) {
+  if (await exports.isUserInGroup(otherUser, group)) {
     const error = new Error('user already in the group');
     error.statusCode = 400;
     throw error;
@@ -174,14 +141,6 @@ exports.addUserToGroup = async (req, res) => {
 };
 
 exports.removeUserFromGroup = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed.');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
-
   const { userId } = req;
   const { chatId, otherUserName } = req.params;
 

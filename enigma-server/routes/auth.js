@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator/check');
 const asyncHandler = require('express-async-handler');
 const authController = require('../controllers/auth');
+const { validateRequest } = require('../util/requests-validator');
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.post(
     body('password').trim().isLength({ min: 6 }),
     body('userName').trim().not().isEmpty(),
   ],
-  asyncHandler(authController.register)
+  asyncHandler(validateRequest(authController.register))
 );
 
 // POST /auth/login
@@ -23,14 +24,14 @@ router.post(
     body('userName').trim().not().isEmpty(),
     body('password').trim().isLength({ min: 6 }),
   ],
-  asyncHandler(authController.login)
+  asyncHandler(validateRequest(authController.login))
 );
 
 // POST /auth/token
 router.post(
   '/token',
   body('token').not().isEmpty(),
-  authController.refreshToken
+  validateRequest(authController.refreshToken)
 );
 
 module.exports = router;

@@ -1,4 +1,3 @@
-const { validationResult } = require('express-validator/check');
 const User = require('../models/user');
 const Chat = require('../models/chat');
 const groupController = require('./group');
@@ -15,14 +14,6 @@ const isUserInChat = async (user, chat) => {
 };
 
 exports.getChatMessages = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed.');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
-
   const { userId } = req;
   const { chatId } = req.params;
 
@@ -54,14 +45,6 @@ exports.getChatMessages = async (req, res) => {
 };
 
 exports.sendMessage = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed.');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
-
   const { userId } = req;
   const { chatId } = req.params;
   const { message } = req.body;

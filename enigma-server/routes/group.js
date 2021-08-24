@@ -1,6 +1,7 @@
 const express = require('express');
 const { body, param } = require('express-validator/check');
 const asyncHandler = require('express-async-handler');
+const { validateRequest } = require('../util/requests-validator');
 const groupController = require('../controllers/group');
 
 const router = express.Router();
@@ -12,21 +13,21 @@ router.get('/', asyncHandler(groupController.getGroupsMetadata));
 router.post(
   '/',
   body('groupName').trim().not().isEmpty(),
-  asyncHandler(groupController.openGroup)
+  asyncHandler(validateRequest(groupController.openGroup))
 );
 
 // GET /chats/groups/:chatId/members
 router.get(
   '/:chatId/members',
   param('chatId').isInt(),
-  asyncHandler(groupController.getGroupMembers)
+  asyncHandler(validateRequest(groupController.getGroupMembers))
 );
 
 // DELETE /chats/groups/:chatId/members/me
 router.delete(
   '/:chatId/members/me',
   param('chatId').isInt(),
-  asyncHandler(groupController.leaveGroup)
+  asyncHandler(validateRequest(groupController.leaveGroup))
 );
 
 // POST /chats/groups/:chatId/members/:otherUserName
@@ -34,7 +35,7 @@ router.post(
   '/:chatId/members/:otherUserName',
   param('chatId').isInt(),
   param('otherUserName').trim().not().isEmpty(),
-  asyncHandler(groupController.addUserToGroup)
+  asyncHandler(validateRequest(groupController.addUserToGroup))
 );
 
 // DELETE /chats/groups/:chatId/members/:otherUserName
@@ -42,7 +43,7 @@ router.delete(
   '/:chatId/members/:otherUserName',
   param('chatId').isInt(),
   param('otherUserName').trim().not().isEmpty(),
-  asyncHandler(groupController.removeUserFromGroup)
+  asyncHandler(validateRequest(groupController.removeUserFromGroup))
 );
 
 module.exports = router;

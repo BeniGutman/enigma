@@ -1,5 +1,4 @@
 const { Op } = require('sequelize');
-const { validationResult } = require('express-validator/check');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -17,14 +16,6 @@ const generateAccessToken = (userId) => {
 };
 
 exports.register = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed.');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
-
   const { email, password, userName } = req.body;
 
   let user;
@@ -51,14 +42,6 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
-
   const { userName, password } = req.body;
 
   const user = await User.findOne({
@@ -92,14 +75,6 @@ exports.login = async (req, res) => {
 };
 
 exports.refreshToken = (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed');
-    error.statusCode = 422;
-    error.data = errors.array();
-    throw error;
-  }
-
   const refreshToken = req.body.token;
   return jwt.verify(
     refreshToken,
