@@ -11,7 +11,7 @@ export class GroupService {
   constructor(private apiService: ApiService) {}
 
   getAllGroups(): Observable<Group[]> {
-    return this.apiService.get('chats/privateChats').pipe(
+    return this.apiService.get('chats/groups').pipe(
       map((results: any) => {
         const groups = results.map((result: any) => {
           return new Group(
