@@ -26,23 +26,27 @@ export class GroupService {
     );
   }
 
-  openGroup() {
-    // TODO: implement
+  openGroup(groupName: string) {
+    return this.apiService.post('chats/groups/', { groupName });
   }
 
-  addMember() {
-    // TODO: implement
+  getMembers(chatId: number) {
+    return this.apiService.get(`chats/groups/${chatId}/members`);
   }
 
-  removeMember() {
-    // TODO: implement
+  leaveGroup(chatId: number) {
+    return this.apiService.delete(`chats/groups/${chatId}/members/me`);
   }
 
-  leaveGroup() {
-    // TODO: implement
+  addMember(chatId: number, otherUserName: string) {
+    return this.apiService.post(
+      `chats/groups/${chatId}/members/${otherUserName}`
+    );
   }
 
-  getMembers() {
-    // TODO: implement
+  removeMember(chatId: number, otherUserName: string) {
+    return this.apiService.delete(
+      `chats/groups/${chatId}/members/${otherUserName}`
+    );
   }
 }

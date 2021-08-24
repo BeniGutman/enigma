@@ -25,7 +25,7 @@ export class PrivateChatService {
     );
   }
 
-  openPrivateChat() {
-    // TODO: implement
+  openPrivateChat(otherUserName: string) {
+    return this.apiService.post('chats/privateChats', { otherUserName });
   }
 }

@@ -16,7 +16,7 @@ export class ChatListComponent implements OnInit {
   constructor(private chatStorageService: ChatStorageService) {}
 
   ngOnInit(): void {
-    this.subscription = this.chatStorageService.chatChanged.subscribe(
+    this.subscription = this.chatStorageService.chatAdded.subscribe(
       (chat: Chat) => {
         this.chats.push(chat);
       }

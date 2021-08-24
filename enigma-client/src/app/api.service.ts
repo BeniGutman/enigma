@@ -10,33 +10,35 @@ import * as config from '../assets/config.json';
   providedIn: 'root',
 })
 export class ApiService {
+  conf = config;
   constructor(private http: HttpClient) {}
 
-  private formatErrors(error: any) {
-    return throwError(error.error);
+  private printError(error: any) {
+    console.log(error);
+    return throwError(error);
   }
 
-  get<T>(path: string, params: HttpParams = new HttpParams()): Observable<T> {
+  get(path: string, params: HttpParams = new HttpParams()): Observable<any> {
     return this.http
-      .get(config.webApiUrl + path, { params })
-      .pipe(catchError(this.formatErrors));
+      .get(this.conf.webApiUrl + path, { params })
+      .pipe(catchError(this.printError));
   }
 
-  put<T>(path: string, body: Object = {}): Observable<T> {
+  put(path: string, body: Object = {}): Observable<any> {
     return this.http
-      .put(config.webApiUrl + path, { body })
-      .pipe(catchError(this.formatErrors));
+      .put(this.conf.webApiUrl + path, { ...body })
+      .pipe(catchError(this.printError));
   }
 
-  post<T>(path: string, body: Object = {}): Observable<T> {
+  post(path: string, body: Object = {}): Observable<any> {
     return this.http
-      .post(config.webApiUrl + path, { body })
-      .pipe(catchError(this.formatErrors));
+      .post(this.conf.webApiUrl + path, { ...body })
+      .pipe(catchError(this.printError));
   }
 
-  delete<T>(path: string): Observable<T> {
+  delete(path: string): Observable<any> {
     return this.http
-      .delete(config.webApiUrl + path)
-      .pipe(catchError(this.formatErrors));
+      .delete(this.conf.webApiUrl + path)
+      .pipe(catchError(this.printError));
   }
 }

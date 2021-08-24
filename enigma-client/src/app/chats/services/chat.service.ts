@@ -5,7 +5,7 @@ import { map, tap } from 'rxjs/operators';
 
 import { ApiService } from '../../api.service';
 import { Chat } from '../models/chat.model';
-import { ChatStorageService } from './chat-storage.service';
+import { Message } from '../models/message.model';
 import { GroupService } from './group.service';
 import { PrivateChatService } from './private-chat.service';
 
@@ -16,8 +16,7 @@ export class ChatService {
   constructor(
     private apiService: ApiService,
     private groupService: GroupService,
-    private privateChatService: PrivateChatService,
-    private chatStorageService: ChatStorageService
+    private privateChatService: PrivateChatService
   ) {}
 
   getAllChats(): Observable<Chat[]> {
@@ -31,11 +30,20 @@ export class ChatService {
     );
   }
 
-  getAllMessage() {
-    // TODO: implement
+  getAllMessages(chatId: number): Observable<Message[]> {
+    return this.apiService.get(`chats/${chatId}/messages`).pipe(
+      map((results: any) => {
+        const messages = results.map((result: any) => {
+          return new Message(result.id, result.sender.userName, result.message);
+        });
+        return messages;
+      })
+    );
   }
 
-  sendMessage() {
-    // TODO: implement
+  sendMessage(chatId: number, messageText: string) {
+    return this.apiService.post(`chats/${chatId}/messages`, {
+      message: messageText,
+    });
   }
 }

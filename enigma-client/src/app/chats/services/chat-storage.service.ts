@@ -3,14 +3,16 @@ import { Subject } from 'rxjs';
 
 import { Chat } from '../models/chat.model';
 import { Message } from '../models/message.model';
+import { ChatService } from './chat.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatStorageService {
+  chatAdded = new Subject<Chat>();
   private chats: Map<number, Chat> = new Map<number, Chat>();
-  chatChanged = new Subject<Chat>();
-  constructor() {}
+
+  constructor(private chatService: ChatService) {}
 
   getChats(): Chat[] {
     return Array.from(this.chats.values());
@@ -19,25 +21,27 @@ export class ChatStorageService {
   setChats(chats: Chat[]) {
     chats.forEach((chat) => {
       this.chats.set(chat.id, chat);
-      this.chatChanged.next(chat);
-      console.log('next new chat, type: ' + typeof chat);
+      this.chatAdded.next(chat);
     });
   }
 
   getChat(chatId: number): Chat | undefined {
     const chat = this.chats.get(chatId);
-    if (!chat) {
-      return;
-    }
-
-    if (!chat.isMessagesInitialized) {
-      // TODO: async get data from server
+    if (!chat!.isMessagesInitialized) {
+      this.initializeChatMessages(chatId);
     }
     return chat;
+  }
+
+  initializeChatMessages(chatId: number): void {
+    this.chatService.getAllMessages(chatId).subscribe((messages: Message[]) => {
+      this.setChatMessages(chatId, messages);
+    });
   }
 
   setChatMessages(chatId: number, messages: Message[]) {
     const chat = this.chats.get(chatId);
     chat!.messages.push(...messages);
+    chat!.isMessagesInitialized = true;
   }
 }
