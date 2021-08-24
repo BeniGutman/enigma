@@ -25,6 +25,12 @@ app.use(cors({ origin: 'http://localhost:4200' }));
 app.use('/auth', authRoutes);
 app.use('/chats', chatRoutes);
 
+/* not found middleware */
+app.use((req, res, next) => {
+  const message = 'no such endpoint';
+  res.status(404).json({ message });
+});
+
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
