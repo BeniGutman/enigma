@@ -6,14 +6,14 @@ export class Message {
   ) {}
 
   get id(): number {
-    return this.id;
+    return this._id;
   }
 
   get sender(): string {
-    return this.sender;
+    return this._sender;
   }
 
   get text(): string {
-    return this.text;
+    return this._text;
   }
 }
