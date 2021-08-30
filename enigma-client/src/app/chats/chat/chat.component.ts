@@ -28,6 +28,7 @@ export class ChatComponent implements OnInit {
       if (!this.chat) {
         this.router.navigate(['..'], { relativeTo: this.route });
       }
+      this.messages = this.chat!.messages;
     });
   }
 }

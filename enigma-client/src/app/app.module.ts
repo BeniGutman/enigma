@@ -7,6 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +20,7 @@ import { ChatsComponent } from './chats/chats.component';
 import { ChatListComponent } from './chats/chat-list/chat-list.component';
 import { ChatItemComponent } from './chats/chat-list/chat-item/chat-item.component';
 import { ChatComponent } from './chats/chat/chat.component';
+import { MessageComponent } from './chats/message/message.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +32,7 @@ import { ChatComponent } from './chats/chat/chat.component';
     ChatListComponent,
     ChatItemComponent,
     ChatComponent,
+    MessageComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,6 +44,8 @@ import { ChatComponent } from './chats/chat/chat.component';
     MatButtonModule,
     MatFormFieldModule,
     MatToolbarModule,
+    MatCardModule,
+    MatDividerModule,
   ],
   providers: [
     {
