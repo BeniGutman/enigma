@@ -86,7 +86,7 @@ exports.refreshToken = (req, res) => {
         throw error;
       }
 
-      const newAccessToken = generateAccessToken({ id: user.id });
+      const newAccessToken = generateAccessToken(user.id);
       return res.status(201).send({
         accessToken: newAccessToken,
         expiresIn: 15 * 60, // 15 minutes
